@@ -1,0 +1,10 @@
+project_id = "wtgdtabphfenphfkrmap"
+
+[functions.ai-ca-chat]
+verify_jwt = true
+
+[functions.itr-extract]
+verify_jwt = true
+
+[functions.notice-analyze]
+verify_jwt = true

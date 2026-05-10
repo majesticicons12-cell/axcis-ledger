@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* AXCIS Ledger — DARK ONLY mobile-first theme.
+ * Pure black background like the reference screenshots, slate cards,
+ * and a vivid sky-blue accent for icons & highlights.
+ * All colors HSL.
+ */
+
+@layer base {
+  :root, .dark {
+    /* Brand ladder (HSL of provided hex codes) */
+    --c1: 210 9% 92%;
+    --c2: 210 9% 85%;
+    --c3: 212 8% 70%;
+    --c4: 210 8% 55%;
+    --c5: 210 13% 40%;
+    --c6: 210 29% 24%;
+    --c7: 210 25% 22%;
+    --c8: 210 29% 19%;
+    --c9: 210 29% 16%;
+    --c10: 210 29% 13%;
+
+    /* DARK THEME (forced) */
+    --background: 0 0% 0%;            /* pure black */
+    --foreground: 0 0% 98%;
+
+    --card: 210 12% 10%;              /* dark slate card */
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 12% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 210 100% 60%;          /* sky-blue accent */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 100% 70%;
+
+    --secondary: 210 12% 14%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 210 12% 12%;
+    --muted-foreground: 210 6% 60%;
+
+    --accent: 210 100% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 4 80% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 70% 45%;
+    --warning: 42 100% 60%;
+
+    --border: 210 12% 16%;
+    --input: 210 12% 14%;
+    --ring: 210 100% 60%;
+
+    --radius: 1rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 55%), hsl(210 100% 65%));
+    --gradient-card: linear-gradient(180deg, hsl(210 12% 11%), hsl(210 12% 9%));
+    --gradient-tip: linear-gradient(135deg, hsl(42 100% 50% / 0.12), hsl(42 100% 50% / 0.04));
+    --gradient-premium: linear-gradient(135deg, hsl(210 100% 25% / 0.4), hsl(210 100% 50% / 0.1));
+
+    --shadow-soft: 0 1px 2px hsl(0 0% 0% / 0.4), 0 4px 16px -4px hsl(0 0% 0% / 0.5);
+    --shadow-elegant: 0 16px 48px -16px hsl(0 0% 0% / 0.7);
+    --shadow-glow: 0 0 32px hsl(var(--primary) / 0.4);
+
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Safe areas for mobile devices */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    overscroll-behavior-y: none;
+  }
+  /* Disable text selection on UI chrome (feels native) */
+  button, nav, header { -webkit-user-select: none; user-select: none; }
+}
+
+@layer utilities {
+  .bg-primary-grad { background-image: var(--gradient-primary); }
+  .bg-card-grad { background-image: var(--gradient-card); }
+  .bg-tip-grad { background-image: var(--gradient-tip); }
+  .bg-premium-grad { background-image: var(--gradient-premium); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .transition-smooth { transition: var(--transition-smooth); }
+
+  /* Mobile app shell — center on tablet/desktop, full-width on phone */
+  .app-shell {
+    @apply mx-auto w-full max-w-[480px] min-h-screen bg-background;
+  }
+  .pt-safe { padding-top: var(--safe-top); }
+  .pb-safe { padding-bottom: var(--safe-bottom); }
+  .pb-nav { padding-bottom: calc(72px + var(--safe-bottom)); }
+
+  .text-balance { text-wrap: balance; }
+}
