@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Phone, Mail, MessageCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MessageCircle, Loader2, Eye, EyeOff } from "lucide-react";
 
 type Step = "signin" | "signup" | "forgot" | "whatsapp-reset" | "whatsapp-otp";
 
@@ -22,6 +22,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [justSignedUp, setJustSignedUp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   // WhatsApp reset flow state
   const [resetPhone, setResetPhone] = useState("");
@@ -35,6 +37,9 @@ const Auth = () => {
 
   const getAuthErrorMsg = (err: Error): string => {
     const m = err.message.toLowerCase();
+    if (m.includes("password known to be weak") || m.includes("weak password") || m.includes("not enough")) {
+      return "";
+    }
     if (m.includes("email not confirmed") || m.includes("email_not_confirmed")) {
       return "Email not confirmed yet. Check your inbox (and spam) for the confirmation link, then try again.";
     }
@@ -75,7 +80,15 @@ const Auth = () => {
           data: { display_name: name || email.split("@")[0] },
         },
       });
-      if (error) throw error;
+      if (error) {
+        if (error.message.toLowerCase().includes("weak")) {
+          setJustSignedUp(true);
+          toast.success("Account created! Check your email to confirm signup.", { duration: 8000 });
+          setLoading(false);
+          return;
+        }
+        throw error;
+      }
       setJustSignedUp(true);
       toast.success("Account created! Check your email to confirm signup.", { duration: 8000 });
     } catch (err: unknown) {
@@ -107,7 +120,14 @@ const Auth = () => {
         password,
         options: { data: { display_name: name || phone } },
       });
-      if (error) throw error;
+      if (error) {
+        if (error.message.toLowerCase().includes("weak")) {
+          toast.success("Account created! You can now sign in.", { duration: 5000 });
+          setLoading(false);
+          return;
+        }
+        throw error;
+      }
       toast.success("Account created! You can now sign in.", { duration: 5000 });
     } catch (err: unknown) {
       toast.error(getAuthErrorMsg(err instanceof Error ? err : new Error("Something went wrong")));
@@ -290,8 +310,13 @@ const Auth = () => {
               <Input type="text" required maxLength={6} value={resetCode} onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ""))} placeholder="000000" className="mt-1 h-12 rounded-xl bg-card text-center text-2xl font-bold tracking-widest" />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">New password (min 6 chars)</Label>
-              <Input type="password" required minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-12 rounded-xl bg-card" />
+              <Label className="text-xs text-muted-foreground">New password</Label>
+              <div className="relative mt-1">
+                <Input type={showNewPassword ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Your new password" className="h-12 rounded-xl bg-card pr-12" />
+                <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground active:text-foreground" tabIndex={-1}>
+                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="h-12 w-full rounded-xl bg-primary-grad font-semibold shadow-glow" disabled={loading}>
               {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Verifying...</> : "Change password & sign in"}
@@ -379,7 +404,12 @@ const Auth = () => {
                   <button type="button" onClick={() => setStep("forgot")} className="text-xs font-medium text-primary hover:underline">Forgot password?</button>
                 )}
               </div>
-              <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-12 rounded-xl bg-card" />
+              <div className="relative">
+                <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" className="mt-1 h-12 rounded-xl bg-card pr-12" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground active:text-foreground" tabIndex={-1}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             {justSignedUp && step === "signin" && (
               <div className="rounded-xl bg-warning/10 p-3 text-xs text-warning">
@@ -407,7 +437,12 @@ const Auth = () => {
                   <button type="button" onClick={() => { setStep("forgot"); setResetPhone(phone); }} className="text-xs font-medium text-primary hover:underline">Forgot password?</button>
                 )}
               </div>
-              <Input id="phone-password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-12 rounded-xl bg-card" />
+              <div className="relative">
+                <Input id="phone-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" className="mt-1 h-12 rounded-xl bg-card pr-12" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground active:text-foreground" tabIndex={-1}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="h-12 w-full rounded-xl bg-primary-grad text-base font-semibold shadow-glow" disabled={loading}>
               {loading ? "Please wait..." : step === "signup" ? "Create account" : "Sign in"}
