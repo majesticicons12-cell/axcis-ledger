@@ -52,6 +52,9 @@ const Auth = () => {
     if (m.includes("rate limit")) {
       return "Too many attempts — please wait a minute and try again.";
     }
+    if (m.includes("phone") && (m.includes("disabled") || m.includes("not enabled") || m.includes("not allowed"))) {
+      return "Phone login is not enabled in your Supabase project. Go to Supabase Dashboard → Authentication → Settings → enable Phone sign-ups.";
+    }
     return err.message;
   };
 
