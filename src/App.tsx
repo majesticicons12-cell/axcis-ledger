@@ -15,7 +15,6 @@ import Tracker from "./pages/Tracker.tsx";
 import NoticeAnalyzer from "./pages/NoticeAnalyzer.tsx";
 import ITRHelper from "./pages/ITRHelper.tsx";
 import Tools from "./pages/Tools.tsx";
-import Updates from "./pages/Updates.tsx";
 import Profile from "./pages/Profile.tsx";
 import EditProfile from "./pages/settings/EditProfile.tsx";
 import Notifications from "./pages/settings/Notifications.tsx";
@@ -42,7 +41,6 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/tools" element={<ProtectedRoute><Tools /></ProtectedRoute>} />
-            <Route path="/updates" element={<ProtectedRoute><Updates /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
             <Route path="/settings/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />

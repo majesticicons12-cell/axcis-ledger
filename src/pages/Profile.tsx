@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Star, Bell, Shield, HelpCircle, FileText, LogOut, ChevronRight,
-  User as UserIcon, Mail, Pencil, MessageSquare, Crown,
+  User as UserIcon, Mail, Pencil, MessageSquare, Crown, KeyRound, MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -73,6 +73,7 @@ const Profile = () => {
   const settings = [
     { icon: Pencil, label: "Edit profile", to: "/profile/edit" },
     { icon: Bell, label: "Notifications", to: "/settings/notifications" },
+    { icon: KeyRound, label: "Change password", onClick: () => navigate("/auth") },
     { icon: Shield, label: "Privacy & Security", to: "/settings/privacy" },
     { icon: FileText, label: "Tax Documents", to: "/settings/documents" },
     { icon: HelpCircle, label: "Help & Support", to: "/settings/help" },
@@ -162,14 +163,17 @@ const Profile = () => {
           <div className="overflow-hidden rounded-2xl bg-card">
             {settings.map((s, i) => {
               const Icon = s.icon;
-              return (
-                <Link
-                  key={s.label}
-                  to={s.to}
-                  className={`flex w-full items-center justify-between px-4 py-4 text-left transition-smooth active:bg-secondary ${
-                    i !== settings.length - 1 ? "border-b border-border/50" : ""
-                  }`}
-                >
+              const shared = `flex w-full items-center justify-between px-4 py-4 text-left transition-smooth active:bg-secondary ${i !== settings.length - 1 ? "border-b border-border/50" : ""}`;
+              return s.onClick ? (
+                <button key={s.label} onClick={s.onClick} className={shared}>
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-5 w-5 text-primary" strokeWidth={2.2} />
+                    <span className="text-sm font-medium">{s.label}</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
+              ) : (
+                <Link key={s.label} to={s.to!} className={shared}>
                   <div className="flex items-center gap-3">
                     <Icon className="h-5 w-5 text-primary" strokeWidth={2.2} />
                     <span className="text-sm font-medium">{s.label}</span>

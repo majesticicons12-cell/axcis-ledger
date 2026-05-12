@@ -4,8 +4,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  MessageSquare, FileText, AlertTriangle, Newspaper,
+  MessageSquare, FileText, AlertTriangle,
   ShieldCheck, Lightbulb, Settings, Star, ArrowRight,
+  Wrench,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -63,7 +64,7 @@ const Dashboard = () => {
     { to: "/chat", icon: MessageSquare, label: "Ask AI CA" },
     { to: "/itr", icon: FileText, label: "ITR Filing" },
     { to: "/notice", icon: AlertTriangle, label: "Notice Help" },
-    { to: "/updates", icon: Newspaper, label: "Tax Updates" },
+    { to: "/tools", icon: Wrench, label: "More Tools" },
   ];
 
   return (

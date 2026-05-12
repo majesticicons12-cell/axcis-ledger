@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   display_name TEXT,
   email TEXT,
+  phone TEXT UNIQUE,
   country TEXT DEFAULT 'IN',
   currency TEXT DEFAULT 'INR',
   profile_type TEXT,
@@ -141,13 +142,23 @@ CREATE TABLE IF NOT EXISTS public.user_roles (
 
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 
--- 10. Helper: check if user has a role
+-- 10. Password reset OTPs (WhatsApp reset)
+CREATE TABLE IF NOT EXISTS public.password_reset_codes (
+  phone TEXT PRIMARY KEY,
+  otp TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.password_reset_codes ENABLE ROW LEVEL SECURITY;
+
+-- 11. Helper: check if user has a role
 CREATE OR REPLACE FUNCTION public.has_role(_user_id UUID, _role public.app_role)
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role)
 $$;
 
--- 11. Helper: monthly message count for usage tracking
+-- 12. Helper: monthly message count for usage tracking
 CREATE OR REPLACE FUNCTION public.monthly_message_count(_user_id UUID)
 RETURNS INTEGER LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT COUNT(*)::int FROM public.messages
@@ -156,7 +167,7 @@ RETURNS INTEGER LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
     AND created_at >= date_trunc('month', now());
 $$;
 
--- 12. Admin stats
+-- 13. Admin stats
 CREATE OR REPLACE FUNCTION public.admin_user_stats()
 RETURNS TABLE(total_users BIGINT, premium_users BIGINT, free_users BIGINT, msgs_this_month BIGINT)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
@@ -167,7 +178,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
     (SELECT COUNT(*) FROM public.messages WHERE role = 'user' AND created_at >= date_trunc('month', now()))
 $$;
 
--- 13. Admin function: toggle user premium plan
+-- 14. Admin function: toggle user premium plan
 CREATE OR REPLACE FUNCTION public.admin_toggle_premium(target_user_id UUID)
 RETURNS JSONB LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
@@ -200,7 +211,7 @@ BEGIN
 END;
 $$;
 
--- 14. RLS policies
+-- 15. RLS policies
 
 -- Profiles
 DROP POLICY IF EXISTS "Users view own profile" ON public.profiles;
@@ -295,7 +306,7 @@ CREATE POLICY "Admins manage roles" ON public.user_roles FOR ALL
   USING (public.has_role(auth.uid(), 'admin'))
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
--- 15. Storage bucket for notices
+-- 16. Storage bucket for notices
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('notices', 'notices', false)
 ON CONFLICT (id) DO NOTHING;

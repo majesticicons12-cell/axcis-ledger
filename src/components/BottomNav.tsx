@@ -1,11 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { Home, MessageSquare, Wrench, Newspaper, User } from "lucide-react";
+import { Home, MessageSquare, Wrench, User } from "lucide-react";
 
 const tabs = [
   { to: "/dashboard", label: "Dashboard", icon: Home },
   { to: "/chat", label: "AI Assistant", icon: MessageSquare },
   { to: "/tools", label: "Tools", icon: Wrench },
-  { to: "/updates", label: "Updates", icon: Newspaper },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
@@ -15,7 +14,7 @@ const BottomNav = () => {
       className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[480px] border-t border-border/60 bg-background/95 backdrop-blur-xl pb-safe"
       aria-label="Primary"
     >
-      <ul className="grid grid-cols-5 px-1 pt-1.5">
+      <ul className="grid grid-cols-4 px-1 pt-1.5">
         {tabs.map((t) => {
           const Icon = t.icon;
           return (

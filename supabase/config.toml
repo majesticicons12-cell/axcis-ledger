@@ -8,3 +8,6 @@ verify_jwt = true
 
 [functions.notice-analyze]
 verify_jwt = true
+
+[functions.whatsapp-reset]
+verify_jwt = false
